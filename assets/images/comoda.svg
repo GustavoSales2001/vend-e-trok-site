@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="680" viewBox="0 0 900 680" role="img">
+<defs>
+<linearGradient id="wall" x2="0" y2="1"><stop stop-color="#F0E9DC"/><stop offset="1" stop-color="#F1EDE6"/></linearGradient>
+<linearGradient id="wood" x2="0" y2="1"><stop stop-color="#BB8154"/><stop offset="1" stop-color="#8D5538"/></linearGradient>
+<linearGradient id="linen" x2="0" y2="1"><stop stop-color="#849383"/><stop offset="1" stop-color="#506B61"/></linearGradient>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="13"/></filter>
+</defs>
+<rect width="900" height="680" fill="url(#wall)"/>
+<path d="M0 510H900V680H0Z" fill="#E8D9C6"/>
+<path d="M0 510H900" stroke="#D5C4AC" stroke-width="5"/>
+<ellipse cx="454" cy="594" rx="310" ry="40" fill="#89755E" opacity=".12" filter="url(#shadow)"/>
+<ellipse cx="454" cy="598" rx="300" ry="46" fill="#E6D8C3" opacity=".62"/>
+<g transform="translate(187 93)">
+<rect x="150" y="68" width="214" height="196" rx="107" fill="#A88C70"/><rect x="162" y="81" width="190" height="172" rx="95" fill="#DFE6DE"/><path d="M178 224L329 104" stroke="#EFF5EC" stroke-width="10" opacity=".45"/>
+<rect x="75" y="278" width="519" height="257" rx="14" fill="#A7724D"/>
+<rect x="93" y="298" width="482" height="218" rx="5" fill="url(#wood)"/>
+<path d="M334 303V511M96 369H571M96 441H571" stroke="#81533B" stroke-width="6"/>
+<g fill="#E4C79D"><rect x="202" y="332" width="56" height="7" rx="3"/><rect x="405" y="332" width="56" height="7" rx="3"/><rect x="202" y="403" width="56" height="7" rx="3"/><rect x="405" y="403" width="56" height="7" rx="3"/><rect x="202" y="477" width="56" height="7" rx="3"/><rect x="405" y="477" width="56" height="7" rx="3"/></g>
+<path d="M116 535V555M557 535V555" stroke="#684634" stroke-width="18" stroke-linecap="round"/>
+<path d="M500 278L489 214H549L535 278Z" fill="#F4E1CC"/><path d="M518 215V157" stroke="#56734B" stroke-width="6"/><ellipse cx="501" cy="162" rx="16" ry="29" transform="rotate(-42 501 162)" fill="#778E66"/><ellipse cx="540" cy="166" rx="15" ry="26" transform="rotate(43 540 166)" fill="#778E66"/>
+</g>
+</svg>

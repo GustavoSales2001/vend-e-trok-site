@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="680" viewBox="0 0 900 680" role="img">
+<defs>
+<linearGradient id="wall" x2="0" y2="1"><stop stop-color="#F0E9DC"/><stop offset="1" stop-color="#F1EDE6"/></linearGradient>
+<linearGradient id="wood" x2="0" y2="1"><stop stop-color="#BB8154"/><stop offset="1" stop-color="#8D5538"/></linearGradient>
+<linearGradient id="linen" x2="0" y2="1"><stop stop-color="#849383"/><stop offset="1" stop-color="#506B61"/></linearGradient>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="13"/></filter>
+</defs>
+<rect width="900" height="680" fill="url(#wall)"/>
+<path d="M0 510H900V680H0Z" fill="#E8D9C6"/>
+<path d="M0 510H900" stroke="#D5C4AC" stroke-width="5"/>
+<ellipse cx="454" cy="594" rx="310" ry="40" fill="#89755E" opacity=".12" filter="url(#shadow)"/>
+<ellipse cx="454" cy="598" rx="300" ry="46" fill="#CED5BF" opacity=".62"/>
+<g transform="translate(175 165)">
+<rect x="81" y="317" width="28" height="100" rx="6" fill="#70543C"/><rect x="527" y="317" width="28" height="100" rx="6" fill="#70543C"/>
+<rect x="67" y="97" width="514" height="248" rx="60" fill="#5F7A6A"/>
+<rect x="95" y="119" width="458" height="171" rx="42" fill="#789383"/>
+<path d="M319 129V273" stroke="#506D5E" stroke-width="5" opacity=".7"/>
+<rect x="93" y="270" width="459" height="92" rx="25" fill="#718A7B"/>
+<rect x="20" y="222" width="91" height="150" rx="40" fill="#5F7A6A"/>
+<rect x="539" y="222" width="91" height="150" rx="40" fill="#5F7A6A"/>
+<rect x="138" y="192" width="96" height="97" rx="13" fill="#D4B39A" transform="rotate(-9 186 240)"/>
+<rect x="417" y="190" width="90" height="98" rx="13" fill="#E6DCCC" transform="rotate(11 461 239)"/>
+<path d="M25 325H622" stroke="#536D5E" stroke-width="5" opacity=".6"/>
+</g><g transform="translate(95 370)"><path d="M42 175L26 91H85L70 175Z" fill="#BA7C58"/><path d="M33 99H78" stroke="#89523D" stroke-width="4"/><path d="M54 102V-44M55 58Q-12 19 22 -20M55 37Q115 -6 99 -50M56 80Q7 61 6 13M55 2Q33 -42 53 -89" fill="none" stroke="#56734B" stroke-width="8" stroke-linecap="round"/><path d="M18 1Q-27 -8 8 -58Q50 -45 18 1ZM89 -12Q133 -68 102 -81Q59 -63 89 -12ZM40 -57Q9 -113 55 -133Q72 -97 40 -57ZM6 47Q-36 8 -18 -14Q31 3 6 47ZM98 36Q148 2 129 -29Q93 -7 98 36Z" fill="#6E8662"/></g>
+</svg>

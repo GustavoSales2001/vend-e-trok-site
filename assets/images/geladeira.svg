@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="680" viewBox="0 0 900 680" role="img">
+<defs>
+<linearGradient id="wall" x2="0" y2="1"><stop stop-color="#E5E8E1"/><stop offset="1" stop-color="#F1EDE6"/></linearGradient>
+<linearGradient id="wood" x2="0" y2="1"><stop stop-color="#BB8154"/><stop offset="1" stop-color="#8D5538"/></linearGradient>
+<linearGradient id="linen" x2="0" y2="1"><stop stop-color="#849383"/><stop offset="1" stop-color="#506B61"/></linearGradient>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="13"/></filter>
+</defs>
+<rect width="900" height="680" fill="url(#wall)"/>
+<path d="M0 510H900V680H0Z" fill="#DED9CD"/>
+<path d="M0 510H900" stroke="#D5C4AC" stroke-width="5"/>
+<ellipse cx="454" cy="594" rx="310" ry="40" fill="#89755E" opacity=".12" filter="url(#shadow)"/>
+<ellipse cx="454" cy="598" rx="300" ry="46" fill="#D3D7CD" opacity=".62"/>
+<g transform="translate(309 74)">
+<rect x="35" y="45" width="309" height="535" rx="25" fill="#D9DFDB"/><rect x="49" y="58" width="283" height="511" rx="19" fill="#F6F6F0"/>
+<rect x="53" y="70" width="275" height="309" rx="15" fill="#E9EDE8"/><rect x="53" y="388" width="275" height="168" rx="13" fill="#E1E5DF"/>
+<path d="M54 382H329" stroke="#C5CCC6" stroke-width="9"/>
+<rect x="286" y="152" width="10" height="130" rx="5" fill="#B9C4BF"/><rect x="286" y="427" width="10" height="91" rx="5" fill="#B9C4BF"/>
+<path d="M65 87V342" stroke="white" stroke-width="10" opacity=".8"/>
+<path d="M74 577V588M307 577V588" stroke="#AAB5AC" stroke-width="22" stroke-linecap="round"/>
+</g>
+</svg>

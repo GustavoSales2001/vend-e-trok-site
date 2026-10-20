@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="680" viewBox="0 0 900 680" role="img">
+<defs>
+<linearGradient id="wall" x2="0" y2="1"><stop stop-color="#F0E9DC"/><stop offset="1" stop-color="#F1EDE6"/></linearGradient>
+<linearGradient id="wood" x2="0" y2="1"><stop stop-color="#BB8154"/><stop offset="1" stop-color="#8D5538"/></linearGradient>
+<linearGradient id="linen" x2="0" y2="1"><stop stop-color="#849383"/><stop offset="1" stop-color="#506B61"/></linearGradient>
+<filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="13"/></filter>
+</defs>
+<rect width="900" height="680" fill="url(#wall)"/>
+<path d="M0 510H900V680H0Z" fill="#E8D9C6"/>
+<path d="M0 510H900" stroke="#D5C4AC" stroke-width="5"/>
+<ellipse cx="454" cy="594" rx="310" ry="40" fill="#89755E" opacity=".12" filter="url(#shadow)"/>
+<ellipse cx="454" cy="598" rx="300" ry="46" fill="#D7DED7" opacity=".62"/>
+<g transform="translate(245 103)">
+<path d="M240 336V480" stroke="#454A4B" stroke-width="22" stroke-linecap="round"/>
+<path d="M239 476L106 515M240 477L365 515M240 477L240 538" stroke="#464E4F" stroke-width="17" stroke-linecap="round"/>
+<g fill="#383F40"><circle cx="106" cy="524" r="17"/><circle cx="366" cy="524" r="17"/><circle cx="240" cy="540" r="17"/></g>
+<rect x="115" y="52" width="249" height="280" rx="93" fill="#3F5655"/>
+<rect x="142" y="76" width="198" height="224" rx="77" fill="#5E7772"/>
+<rect x="98" y="310" width="285" height="77" rx="35" fill="#435E5A"/>
+<path d="M108 264L74 371M371 264L413 371" stroke="#4E5453" stroke-width="22" stroke-linecap="round"/>
+<path d="M81 369H126M371 369H411" stroke="#3D4948" stroke-width="20" stroke-linecap="round"/>
+</g>
+</svg>

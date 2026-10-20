@@ -1,0 +1,19 @@
+VEND E TROK — SITE DEMONSTRATIVO
+
+ABRIR: clique duas vezes no arquivo index.html.
+
+NO VS CODE: Arquivo > Abrir Pasta > selecione esta pasta vend-e-trok-site.
+
+NÃO SEPARE index.html, css, js e assets.
+
+COMO ALTERAR:
+- Texto do site: index.html
+- Cores e design: css/styles.css
+- Produtos e imagens: js/products.js
+- Botões, busca, filtros e favoritos: js/main.js
+
+ATENÇÃO: a vitrine tem imagens ilustrativas e produtos NÃO confirmados na loja.
+O site é um protótipo visual, sem pagamento, estoque real ou WhatsApp configurado.
+O telefone público informado é (11) 4791-2391.
+
+Consulte o README.md para todas as instruções.
