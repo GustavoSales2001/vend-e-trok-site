@@ -1,64 +1,100 @@
-# Vend e Trok — site demonstrativo de vitrine comercial
+# Vend e Trok — vitrine digital de móveis e artigos usados
 
-Projeto criado para apresentar uma proposta de site para a **Vend e Trok Comércio de Usados**, localizada na Rua Fidalgo, 69, Centro, Mogi das Cruzes, SP. Telefone público: **(11) 4791-2391**.
+Site institucional e catálogo demonstrativo desenvolvido para a **Vend e Trok Comércio de Usados**, em Mogi das Cruzes (SP).
 
-## Como abrir agora (sem instalar nada)
+O projeto apresenta a loja, sua proposta de reaproveitamento, exemplos de produtos e formas de contato. O visitante pode explorar a vitrine, pesquisar itens, salvar seus favoritos e enviar uma consulta personalizada diretamente pelo WhatsApp.
 
-1. Extraia a pasta `vend-e-trok-site` do ZIP.
-2. Mantenha `index.html`, `css`, `js` e `assets` **juntos**, dentro da mesma pasta.
-3. Clique duas vezes em `index.html` para abrir no navegador.
-4. Para editar no VS Code: **Arquivo > Abrir Pasta... > vend-e-trok-site**.
+## Repositório
 
-O site funciona localmente sem servidor, extensões, pacotes ou dependências externas.
+Código-fonte disponível em:
+
+<https://github.com/GustavoSales2001/vend-e-trok-site>
+
+## Funcionalidades
+
+- Layout responsivo para computadores, tablets e celulares.
+- Navegação por seções com rolagem suave.
+- Animações variadas quando os conteúdos entram na área visível.
+- Compatibilidade com a preferência de redução de movimento do dispositivo.
+- Catálogo demonstrativo organizado por categorias.
+- Filtros para sala, quarto, cozinha, escritório e outros itens.
+- Busca instantânea por nome, descrição ou categoria.
+- Modal com detalhes de cada produto.
+- Lista de interesse salva no navegador com `localStorage`.
+- Envio da lista completa de favoritos pelo WhatsApp.
+- Consulta de um produto específico com mensagem personalizada.
+- Botão flutuante e outros atalhos de contato pelo WhatsApp.
+- Link direto para a localização da loja no Google Maps.
+- Menu adaptado para dispositivos móveis.
+- Elementos básicos de acessibilidade, navegação por teclado e textos alternativos.
+
+## Contato configurado
+
+- **WhatsApp:** [(11) 98887-5052](https://wa.me/5511988875052)
+- **Telefone:** (11) 4791-2391
+- **Endereço:** Rua Fidalgo, 69 — Centro, Mogi das Cruzes — SP
+
+As mensagens do WhatsApp mudam conforme a ação do visitante. Ao consultar uma peça, o nome do item é incluído automaticamente. Ao enviar a lista de interesse, todos os produtos salvos são adicionados à mensagem.
+
+## Tecnologias utilizadas
+
+- HTML5
+- CSS3
+- JavaScript puro
+- SVG para ilustrações e ícones
+- `localStorage` para manter a lista de interesse
+- `IntersectionObserver` para ativar as animações durante a rolagem
+
+O projeto não utiliza frameworks, bibliotecas externas, banco de dados ou processo de instalação.
+
+## Como executar localmente
+
+### Opção 1 — abrir diretamente
+
+1. Baixe ou clone este repositório.
+2. Abra a pasta `vend-e-trok-site`.
+3. Clique duas vezes no arquivo `index.html`.
+
+### Opção 2 — usar o VS Code
+
+```bash
+git clone https://github.com/GustavoSales2001/vend-e-trok-site.git
+cd vend-e-trok-site
+code .
+```
+
+Depois, abra o `index.html` no navegador. Também é possível usar uma extensão de servidor local, como o Live Server, mas ela não é obrigatória.
 
 ## Estrutura do projeto
 
 ```text
 vend-e-trok-site/
-├── index.html                # Página principal
+├── index.html
 ├── css/
-│   └── styles.css            # Cores, layout, animações e responsividade
+│   └── styles.css
 ├── js/
-│   ├── products.js           # Catálogo demonstrativo (edite aqui)
-│   └── main.js               # Filtros, busca, lista e modal
+│   ├── main.js
+│   └── products.js
 ├── assets/
-│   ├── icons/favicon.svg     # Ícone da aba do navegador
-│   └── images/               # Imagens SVG locais criadas para o modelo
-├── README.md
-└── LEIA-PRIMEIRO.txt
+│   ├── icons/
+│   │   └── favicon.svg
+│   └── images/
+│       ├── aparador.svg
+│       ├── cadeira.svg
+│       ├── comoda.svg
+│       ├── estante.svg
+│       ├── geladeira.svg
+│       ├── hero-room.svg
+│       ├── mesa.svg
+│       ├── poltrona.svg
+│       └── sofa.svg
+├── LEIA-PRIMEIRO.txt
+└── README.md
 ```
-
-## O que já funciona
-
-- Página responsiva para computador e celular.
-- Filtros de produtos por categoria.
-- Busca instantânea por nome, descrição ou categoria.
-- Detalhes individuais dos itens em janela/modal.
-- Botão de favoritos, com lista de interesse salva no navegador (`localStorage`).
-- Copiar uma lista para pedir informações à loja.
-- Botão **Ligar** usando o telefone público informado.
-- Botão de endereço que abre o Google Maps.
-- Animações suaves e variadas conforme o conteúdo entra na tela, com suporte à preferência de redução de movimento.
-- WhatsApp do proprietário com mensagem específica para cada produto e para a lista de interesse.
-- Menu mobile e navegação pelas seções.
-- Acessibilidade básica, textos alternativos e redução de movimento.
-- Imagens e estilos locais: não depende de imagens remotas ou de Google Fonts.
-
-## IMPORTANTE — antes de publicar em nome da loja
-
-**Este é um PROTÓTIPO comercial, não uma loja virtual em funcionamento.**
-
-- As 8 peças do catálogo e suas ilustrações são fictícias, **não foram verificadas em estoque**.
-- Não há preços, formas de pagamento, garantias, promessa de entrega nem afirmação de que a loja vende online.
-- Substitua fotos e produtos por itens reais, com autorização da loja, e confirme preço, estado de conservação e disponibilidade.
-- Confirme com o proprietário endereço e telefone atualizados, identidade visual e horário de atendimento.
-- O WhatsApp informado pelo proprietário está configurado como **(11) 98887-5052**.
-- Não há checkout, pagamento integrado, gestão de estoque, área administrativa, banco de dados ou formulário enviando dados a servidor.
-- A lista de interesse funciona apenas no navegador do visitante; **não chega automaticamente ao estabelecimento**.
 
 ## Como atualizar o catálogo
 
-Abra `js/products.js`. Cada item possui os campos:
+Os produtos demonstrativos ficam no arquivo `js/products.js`. Cada item segue esta estrutura:
 
 ```js
 {
@@ -69,20 +105,44 @@ Abra `js/products.js`. Cada item possui os campos:
   image: 'assets/images/sofa.svg',
   badge: 'Inspiração',
   description: 'Descrição curta',
-  details: 'Detalhes e estado real, após confirmação'
+  details: 'Informações adicionais sobre a peça'
 }
 ```
 
-1. Coloque a foto real em `assets/images/` (ex.: `sofa-real.jpg`).
-2. Troque o caminho do `image` para `assets/images/sofa-real.jpg`.
-3. Troque `title`, `description`, `details` e `badge` com informações aprovadas.
-4. Para adicionar um produto, copie um objeto e crie um `id` único.
-5. Se o site for publicado, retire ou reescreva todos os avisos de "vitrine demonstrativa" **somente depois** de fornecer um catálogo real.
+Para cadastrar um item:
 
-## Próxima etapa recomendada
+1. Adicione a imagem em `assets/images/`.
+2. Copie um dos objetos existentes em `js/products.js`.
+3. Defina um `id` único.
+4. Atualize nome, categoria, imagem, descrição e detalhes.
+5. Abra o site e teste a busca, o filtro, o modal e a mensagem do WhatsApp.
 
-Ao validar a proposta com a loja, é possível construir um painel privado para cadastrar fotos, preços e estoque, com API, banco de dados e fluxo de orçamentos. Essa fase precisa de backend e hospedagem e não faz parte desta versão estática.
+## Como enviar novas alterações ao GitHub
+
+Depois de modificar os arquivos, execute no terminal do VS Code:
+
+```bash
+git add .
+git commit -m "Descreva a alteração realizada"
+git push
+```
+
+## Status do projeto
+
+Esta versão funciona como uma **vitrine demonstrativa**. Os produtos e ilustrações atuais são exemplos e não representam estoque confirmado.
+
+Antes de utilizar o site como catálogo oficial da loja, é necessário substituir os exemplos por fotos e informações reais, confirmando disponibilidade, estado de conservação e valores.
+
+O projeto não possui checkout, pagamentos, reserva automática, painel administrativo ou controle de estoque. A lista de interesse permanece no navegador do visitante e somente é enviada à loja quando ele toca no botão do WhatsApp.
+
+## Próximas melhorias possíveis
+
+- Publicação do site com GitHub Pages.
+- Cadastro de produtos reais e preços atualizados.
+- Painel administrativo para gerenciar o catálogo.
+- Integração com banco de dados e controle de estoque.
+- Recebimento e acompanhamento de solicitações de orçamento.
 
 ---
 
-Proposta de apresentação independente. A marca e os dados públicos da empresa foram usados apenas para demonstrar o conceito. A aprovação e publicação dependem de autorização do estabelecimento.
+Projeto desenvolvido como apresentação digital da Vend e Trok Comércio de Usados.
