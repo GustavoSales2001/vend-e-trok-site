@@ -1,246 +1,95 @@
-'use strict';
-
+﻿'use strict';
 const PRODUCTS = window.VEND_TROK_PRODUCTS || [];
 const WHATSAPP_NUMBER = '5511988875052';
 const STORAGE_KEY = 'vend-e-trok-lista-v1';
+const CART_KEY = 'vend-e-trok-cart-demo-v1';
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
-const icon = (name) => `<svg class="icon" aria-hidden="true"><use href="#i-${name}"/></svg>`;
-const state = { category: 'todos', query: '', saved: new Set() };
-let lastFocus = null;
-let toastTimer = null;
-let revealObserver = null;
-
-function whatsappUrl(message) {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-}
-
-try {
-  const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  if (Array.isArray(stored)) state.saved = new Set(stored.filter(id => PRODUCTS.some(p => p.id === id)));
-} catch (_) { /* Storage indisponível: lista funciona nesta sessão. */ }
-
-function saveList() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...state.saved])); } catch (_) {}
-  $('#list-count').textContent = state.saved.size;
-  $('#drawer-title-count').textContent = `(${state.saved.size})`;
-}
-
-function normalize(value) { return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+const icon = name => `<svg class="icon" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const money = value => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+const state = { category: 'todos', query: '', sort: 'featured', saved: new Set(), cart: {} };
+let lastFocus = null, toastTimer = null, revealObserver = null;
+const whatsappUrl = message => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+const safeRead = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); } catch (_) { return fallback; } };
+const initialSaved = safeRead(STORAGE_KEY, []);
+if (Array.isArray(initialSaved)) state.saved = new Set(initialSaved.filter(id => PRODUCTS.some(p => p.id === id)));
+const initialCart = safeRead(CART_KEY, {});
+if (initialCart && typeof initialCart === 'object' && !Array.isArray(initialCart)) state.cart = Object.fromEntries(Object.entries(initialCart).filter(([id, qty]) => PRODUCTS.some(p => p.id === id) && Number.isInteger(qty) && qty > 0).map(([id, qty]) => [id, Math.min(qty, 20)]));
+function saveList() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...state.saved])); } catch (_) {} $('#list-count').textContent = state.saved.size; $('#drawer-title-count').textContent = `(${state.saved.size})`; }
+function saveCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(state.cart)); } catch (_) {} }
+function normalize(v) { return v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
 function filteredProducts() {
-  return PRODUCTS.filter(p =>
-    (state.category === 'todos' || p.category === state.category) &&
-    normalize([p.title, p.categoryLabel, p.description].join(' ')).includes(normalize(state.query))
-  );
+  let items = PRODUCTS.filter(p => (state.category === 'todos' || p.category === state.category) && normalize([p.title, p.categoryLabel, p.description].join(' ')).includes(normalize(state.query)));
+  if (state.sort === 'price-asc') items.sort((a, b) => a.price - b.price);
+  if (state.sort === 'price-desc') items.sort((a, b) => b.price - a.price);
+  if (state.sort === 'recent') items = [...items].reverse();
+  return items;
 }
-
 function productCard(product, index) {
   const saved = state.saved.has(product.id);
-  return `<article class="product-card" style="--delay:${Math.min(index, 6) * 45}ms">
-    <div class="product-image">
-      <img loading="eager" src="${product.image}" alt="Ilustração demonstrativa de ${product.title.toLowerCase()}" width="900" height="680">
-      <span class="product-badge">✳ ${product.badge}</span>
-      <button type="button" class="favorite-button ${saved ? 'is-saved' : ''}" data-save="${product.id}" aria-label="${saved ? 'Remover' : 'Salvar'} ${product.title} na lista" aria-pressed="${saved}">${icon('heart')}</button>
-    </div>
-    <div class="product-info"><span class="product-category">${product.categoryLabel}</span><h3>${product.title}</h3><p>${product.description}</p>
-      <div class="product-bottom"><span>Valor sob consulta</span><button class="product-detail-button" type="button" data-detail="${product.id}" aria-label="Ver detalhes de ${product.title}">${icon('arrow-up-right')}</button></div>
-    </div>
-  </article>`;
+  return `<article class="product-card" style="--delay:${Math.min(index, 6) * 45}ms"><div class="product-image"><img loading="lazy" src="${product.image}" alt="Ilustração demonstrativa de ${product.title.toLowerCase()}" width="900" height="680"><span class="product-badge">${product.badge}</span><button type="button" class="favorite-button ${saved ? 'is-saved' : ''}" data-save="${product.id}" aria-label="${saved ? 'Remover' : 'Salvar'} ${product.title} na lista" aria-pressed="${saved}">${icon('heart')}</button></div><div class="product-info"><span class="product-category">${product.categoryLabel} · ${product.condition}</span><h3>${product.title}</h3><p>${product.description}</p><div class="product-bottom"><span><small>PREÇO DEMONSTRATIVO</small>${money(product.price)}</span><button class="product-detail-button" type="button" data-detail="${product.id}" aria-label="Ver detalhes de ${product.title}">${icon('arrow-up-right')}</button><button class="button button-primary add-cart" type="button" data-cart-add="${product.id}">Adicionar</button></div></div></article>`;
 }
-
 function renderProducts() {
-  const items = filteredProducts();
-  $('#product-grid').innerHTML = items.map(productCard).join('');
-  $('#result-count').textContent = `${items.length} ${items.length === 1 ? 'ideia encontrada' : 'ideias encontradas'}`;
+  const items = filteredProducts(); $('#product-grid').innerHTML = items.map(productCard).join('');
+  $('#result-count').textContent = `${items.length} ${items.length === 1 ? 'item demonstrativo' : 'itens demonstrativos'}`;
   $('#empty-state').hidden = items.length !== 0;
-  $$('.filter-chip').forEach(btn => {
-    const active = btn.dataset.category === state.category;
-    btn.classList.toggle('is-active', active);
-    btn.setAttribute('aria-pressed', String(active));
-  });
-  saveList();
-  prepareProductReveals();
+  $$('.filter-chip').forEach(btn => { const active = btn.dataset.category === state.category; btn.classList.toggle('is-active', active); btn.setAttribute('aria-pressed', String(active)); });
+  saveList(); prepareProductReveals();
 }
-
-function showToast(message) {
-  const toast = $('#toast');
-  toast.textContent = message;
-  toast.classList.add('visible');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('visible'), 3000);
-}
-
+function showToast(message) { const toast = $('#toast'); toast.textContent = message; toast.classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('visible'), 3000); }
 function toggleSaved(id) {
-  const product = PRODUCTS.find(p => p.id === id);
-  if (!product) return;
-  if (state.saved.has(id)) { state.saved.delete(id); showToast('Removido da sua lista.'); }
-  else { state.saved.add(id); showToast('Ideia adicionada à sua lista!'); }
-  renderProducts();
-  renderDrawer();
-  if ($('#product-modal').open) {
-    const modalButton = $('#modal-save');
-    if (modalButton) {
-      modalButton.innerHTML = icon('heart') + (state.saved.has(id) ? ' Remover da lista' : ' Adicionar à minha lista');
-      modalButton.classList.toggle('is-saved', state.saved.has(id));
-    }
-  }
+  if (!PRODUCTS.some(p => p.id === id)) return;
+  if (state.saved.has(id)) { state.saved.delete(id); showToast('Removido da sua lista.'); } else { state.saved.add(id); showToast('Item salvo na sua lista.'); }
+  renderProducts(); renderDrawer();
+  const button = $('#modal-save'); if (button && $('#product-modal').open) { button.innerHTML = icon('heart') + (state.saved.has(id) ? ' Remover da lista' : ' Adicionar à minha lista'); button.classList.toggle('is-saved', state.saved.has(id)); }
 }
-
 function renderDrawer() {
-  saveList();
-  const list = [...state.saved].map(id => PRODUCTS.find(p => p.id === id)).filter(Boolean);
-  $('#drawer-items').innerHTML = list.length ? list.map(p => `
-    <div class="drawer-item"><img src="${p.image}" alt="" width="84" height="74"><div><small>${p.categoryLabel}</small><strong>${p.title}</strong><span>Consultar na loja</span></div><button class="icon-button remove-item" type="button" data-save="${p.id}" aria-label="Remover ${p.title}">${icon('x')}</button></div>
-  `).join('') : '<div class="drawer-empty"><span>♡</span><strong>Sua lista está vazia</strong><p>Gostou de alguma ideia? Toque no coração para guardar aqui.</p></div>';
-  $('#copy-list').disabled = list.length === 0;
-  const whatsappButton = $('#send-list-whatsapp');
-  whatsappButton.classList.toggle('is-disabled', list.length === 0);
-  whatsappButton.setAttribute('aria-disabled', String(list.length === 0));
-  whatsappButton.href = list.length ? whatsappUrl(listMessage()) : '#';
+  saveList(); const list = [...state.saved].map(id => PRODUCTS.find(p => p.id === id)).filter(Boolean);
+  $('#drawer-items').innerHTML = list.length ? list.map(p => `<div class="drawer-item"><img src="${p.image}" alt="" width="84" height="74"><div><small>${p.categoryLabel}</small><strong>${p.title}</strong><span>Consultar na loja</span></div><button class="icon-button remove-item" type="button" data-save="${p.id}" aria-label="Remover ${p.title}">${icon('x')}</button></div>`).join('') : '<div class="drawer-empty"><span>♡</span><strong>Sua lista está vazia</strong><p>Toque no coração para guardar itens demonstrativos.</p></div>';
+  $('#copy-list').disabled = list.length === 0; const a = $('#send-list-whatsapp'); a.classList.toggle('is-disabled', list.length === 0); a.setAttribute('aria-disabled', String(list.length === 0)); a.href = list.length ? whatsappUrl(listMessage()) : '#';
 }
-
-function openDrawer() {
-  lastFocus = document.activeElement;
-  renderDrawer();
-  $('#drawer-overlay').hidden = false;
-  $('#shortlist-drawer').hidden = false;
-  document.body.classList.add('has-overlay');
-  $('#shortlist-drawer').focus();
-}
-function closeDrawer() {
-  $('#shortlist-drawer').hidden = true;
-  $('#drawer-overlay').hidden = true;
-  document.body.classList.remove('has-overlay');
-  lastFocus?.focus();
-}
-
+function listMessage() { const titles = [...state.saved].map(id => PRODUCTS.find(p => p.id === id)?.title).filter(Boolean); return `Olá! Gostaria de saber se há itens como estes disponíveis:\n\n${titles.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\nEsta lista contém apenas exemplos ilustrativos, não produtos anunciados em estoque.`; }
+function openDrawer() { lastFocus = document.activeElement; renderDrawer(); $('#drawer-overlay').hidden = false; $('#shortlist-drawer').hidden = false; document.body.classList.add('has-overlay'); $('#shortlist-drawer').focus(); }
+function closeDrawer() { $('#shortlist-drawer').hidden = true; $('#drawer-overlay').hidden = true; document.body.classList.remove('has-overlay'); lastFocus?.focus(); }
 function openProduct(id) {
-  const p = PRODUCTS.find(item => item.id === id);
-  if (!p) return;
-  lastFocus = document.activeElement;
-  const productMessage = `Olá! Vi o item “${p.title}” na vitrine da Vend e Trok e gostaria de saber se há uma peça como essa disponível. Podem informar o estado de conservação e o valor?`;
-  $('#modal-content').innerHTML = `<div class="modal-grid"><div class="modal-image"><img src="${p.image}" alt="Ilustração demonstrativa de ${p.title.toLowerCase()}" width="900" height="680"></div><div class="modal-info"><span class="eyebrow eyebrow-dark">PEÇA ILUSTRATIVA</span><span class="modal-category">${p.categoryLabel}</span><h2 id="modal-title">${p.title}</h2><p class="modal-desc">${p.description}</p><div class="modal-detail-note"><strong>Sobre esta peça</strong><p>${p.details}</p></div><strong class="modal-price">Valor sob consulta</strong><a class="button button-whatsapp full-width" href="${whatsappUrl(productMessage)}" target="_blank" rel="noopener noreferrer">${icon('whatsapp')} Consultar este item</a><button id="modal-save" class="button button-outline full-width ${state.saved.has(id) ? 'is-saved' : ''}" type="button" data-save="${id}">${icon('heart')} ${state.saved.has(id) ? 'Remover da lista' : 'Adicionar à minha lista'}</button><small class="modal-warning">Imagem criada para demonstração. Este produto não foi confirmado no estoque da loja.</small></div></div>`;
+  const p = PRODUCTS.find(item => item.id === id); if (!p) return; lastFocus = document.activeElement;
+  const msg = `Olá! Vi o item "${p.title}" na vitrine da Vend e Trok e gostaria de saber se há uma peça assim disponível.`;
+  $('#modal-content').innerHTML = `<div class="modal-grid"><div class="modal-image"><img src="${p.image}" alt="Ilustração demonstrativa de ${p.title}" width="900" height="680"></div><div class="modal-info"><span class="eyebrow eyebrow-dark">PRODUTO E PREÇO FICTÍCIOS</span><span class="modal-category">${p.categoryLabel} · ${p.condition}</span><h2 id="modal-title">${p.title}</h2><p class="modal-desc">${p.description}</p><div class="modal-detail-note"><strong>Sobre esta peça</strong><p>${p.details}</p></div><strong class="modal-price">${money(p.price)} <small>demonstrativo</small></strong><button class="button button-primary full-width" type="button" data-cart-add="${p.id}">Adicionar ao carrinho</button><a class="button button-whatsapp full-width" href="${whatsappUrl(msg)}" target="_blank" rel="noopener noreferrer">${icon('whatsapp')} Consultar a loja</a><button id="modal-save" class="button button-outline full-width ${state.saved.has(id) ? 'is-saved' : ''}" type="button" data-save="${id}">${icon('heart')} ${state.saved.has(id) ? 'Remover da lista' : 'Adicionar à minha lista'}</button><small class="modal-warning">Imagem, item, condição e preço são demonstrativos. Estoque não confirmado.</small></div></div>`;
   $('#product-modal').showModal();
 }
-
-function listMessage() {
-  const titles = [...state.saved].map(id => PRODUCTS.find(p => p.id === id)?.title).filter(Boolean);
-  return `Olá! Conheci a vitrine demonstrativa da Vend e Trok e gostaria de saber se vocês têm itens como estes disponíveis:\n\n${titles.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\nPoderiam informar disponibilidade, estado de conservação e valor?\n\n*Esta lista é de modelos ilustrativos, não de produtos anunciados em estoque.*`;
+function renderCart() {
+  const entries = Object.entries(state.cart).map(([id, qty]) => ({ product: PRODUCTS.find(p => p.id === id), qty })).filter(x => x.product);
+  $('#cart-count').textContent = entries.reduce((n, x) => n + x.qty, 0);
+  $('#cart-items').innerHTML = entries.length ? entries.map(({product:p, qty}) => `<div class="drawer-item cart-item"><img src="${p.image}" alt="" width="84" height="74"><div><small>${p.categoryLabel}</small><strong>${p.title}</strong><span>${money(p.price)} cada</span><div class="quantity-control"><button type="button" data-qty="${p.id}" data-delta="-1" aria-label="Diminuir ${p.title}">−</button><span>${qty}</span><button type="button" data-qty="${p.id}" data-delta="1" aria-label="Aumentar ${p.title}">+</button></div></div><button class="icon-button remove-item" type="button" data-cart-remove="${p.id}" aria-label="Remover ${p.title}">${icon('x')}</button></div>`).join('') : '<div class="drawer-empty"><strong>Carrinho vazio</strong><p>Adicione itens demonstrativos para experimentar o fluxo.</p></div>';
+  const total = entries.reduce((n, x) => n + x.product.price * x.qty, 0); $('#cart-subtotal').textContent = money(total); $('#start-checkout').disabled = !entries.length; $('#clear-cart').disabled = !entries.length; saveCart();
 }
-
-async function copyList() {
-  const message = listMessage();
-  try {
-    if (navigator.clipboard?.writeText) await navigator.clipboard.writeText(message);
-    else {
-      const area = document.createElement('textarea'); area.value = message; area.style.position = 'fixed'; area.style.opacity = '0'; document.body.appendChild(area); area.select();
-      if (!document.execCommand('copy')) throw new Error('Sem suporte a cópia');
-      area.remove();
-    }
-    showToast('Lista copiada! Cole a mensagem no canal que preferir.');
-  } catch (_) { showToast('Não foi possível copiar automaticamente neste navegador.'); }
+function openCart() { lastFocus = document.activeElement; renderCart(); $('#cart-overlay').hidden = false; $('#cart-drawer').hidden = false; document.body.classList.add('has-overlay'); $('#cart-drawer').focus(); }
+function closeCart() { $('#cart-drawer').hidden = true; $('#cart-overlay').hidden = true; document.body.classList.remove('has-overlay'); lastFocus?.focus(); }
+function addToCart(id) { if (!PRODUCTS.some(p => p.id === id)) return; state.cart[id] = Math.min((state.cart[id] || 0) + 1, 20); renderCart(); showToast('Adicionado ao carrinho demonstrativo.'); if ($('#product-modal').open) $('#product-modal').close(); }
+function beginCheckout() {
+  const subtotal = Object.entries(state.cart).reduce((sum, [id, qty]) => sum + (PRODUCTS.find(p => p.id === id)?.price || 0) * qty, 0); closeCart();
+  $('#checkout-content').innerHTML = `<div class="checkout-content"><span class="eyebrow eyebrow-dark">ETAPA FINAL · SIMULAÇÃO</span><h2 id="checkout-title">Como você prefere receber?</h2><div class="demo-alert" role="status">Demonstração: nenhum pedido real será enviado e nenhuma cobrança será feita.</div><form id="checkout-form"><div class="checkout-fields"><label class="checkout-field">Seu nome<input name="name" required autocomplete="name" maxlength="80" placeholder="Nome completo"></label><label class="checkout-field">Telefone para contato<input name="phone" required autocomplete="tel" maxlength="20" placeholder="(11) 99999-9999"></label></div><fieldset class="fulfillment-options"><legend>Forma de recebimento</legend><label class="fulfillment-card"><input type="radio" name="fulfillment" value="pickup" checked><span class="fulfillment-copy"><strong>Retirar na loja</strong><small>Rua Fidalgo, 69 — Centro<br>Mogi das Cruzes, SP</small></span></label><label class="fulfillment-card"><input type="radio" name="fulfillment" value="delivery"><span class="fulfillment-copy"><strong>Entrega</strong><small>O frete será cotado e confirmado pela loja</small></span></label></fieldset><div class="checkout-fields delivery-fields" id="delivery-address" hidden><label class="checkout-field">Endereço para cotação<input name="address" autocomplete="street-address" maxlength="180" placeholder="Rua, número e complemento"></label><label class="checkout-field">CEP<input name="zip" autocomplete="postal-code" maxlength="9" inputmode="numeric" placeholder="00000-000"></label></div><div class="checkout-total"><span>Subtotal demonstrativo</span><strong>${money(subtotal)}</strong></div><p class="shipping-note">Frete a cotar com a loja. Nenhuma cobrança será realizada nesta demonstração.</p><button class="button button-primary full-width" type="submit">Simular resumo do pedido</button></form></div>`;
+  $('#checkout-modal').showModal();
 }
-
 function setupScrollReveals() {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const groups = [
-    ['.catalog-heading > div', 'reveal-up'], ['.small-stamp', 'reveal-scale'],
-    ['.catalog-toolbar', 'reveal-up'], ['.catalog-callout', 'reveal-scale'],
-    ['.mission-visual', 'reveal-left'], ['.mission-copy', 'reveal-right'],
-    ['.steps-heading > div', 'reveal-left'], ['.steps-heading > p', 'reveal-right'],
-    ['.step-card', 'reveal-up'], ['.cta-inner > :not(.cta-decor)', 'reveal-up'],
-    ['.location-copy', 'reveal-left'], ['.map-panel', 'reveal-right'],
-    ['.footer-top > div', 'reveal-up']
-  ];
-
-  groups.forEach(([selector, variant]) => {
-    $$(selector).forEach((element, index) => {
-      element.classList.add('scroll-reveal', variant);
-      element.style.setProperty('--reveal-delay', `${Math.min(index, 4) * 90}ms`);
-    });
-  });
-
-  if (reduceMotion || !('IntersectionObserver' in window)) {
-    $$('.scroll-reveal').forEach(element => element.classList.add('is-visible'));
-    return;
-  }
-
-  revealObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add('is-visible');
-      revealObserver.unobserve(entry.target);
-    });
-  }, { threshold: 0.14, rootMargin: '0px 0px -7% 0px' });
-
-  $$('.scroll-reveal').forEach(element => revealObserver.observe(element));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  [['.catalog-heading > div','reveal-up'],['.small-stamp','reveal-scale'],['.catalog-toolbar','reveal-up'],['.catalog-callout','reveal-scale'],['.mission-visual','reveal-left'],['.mission-copy','reveal-right'],['.steps-heading > div','reveal-left'],['.steps-heading > p','reveal-right'],['.step-card','reveal-up'],['.cta-inner > :not(.cta-decor)','reveal-up'],['.location-copy','reveal-left'],['.map-panel','reveal-right'],['.footer-top > div','reveal-up']].forEach(([sel, cls]) => $$(sel).forEach((el,i) => {el.classList.add('scroll-reveal',cls);el.style.setProperty('--reveal-delay',`${Math.min(i,4)*90}ms`);}));
+  if (reduce || !('IntersectionObserver' in window)) { $$('.scroll-reveal').forEach(el=>el.classList.add('is-visible')); return; }
+  revealObserver = new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-visible');revealObserver.unobserve(e.target);}}),{threshold:.14,rootMargin:'0px 0px -7% 0px'}); $$('.scroll-reveal').forEach(el=>revealObserver.observe(el));
 }
-
-function prepareProductReveals() {
-  $$('.product-card').forEach((element, index) => {
-    element.classList.add('scroll-reveal', index % 2 ? 'reveal-scale' : 'reveal-up');
-    element.style.setProperty('--reveal-delay', `${Math.min(index % 4, 3) * 70}ms`);
-    if (revealObserver) revealObserver.observe(element);
-    else element.classList.add('is-visible');
-  });
-}
-
-$('#category-filters').addEventListener('click', e => {
-  const btn = e.target.closest('[data-category]');
-  if (!btn) return;
-  state.category = btn.dataset.category;
-  renderProducts();
-});
-$('#product-search').addEventListener('input', e => { state.query = e.target.value.trim(); renderProducts(); });
-$('#clear-filters').addEventListener('click', () => {
-  state.category = 'todos'; state.query = ''; $('#product-search').value = ''; renderProducts(); $('#product-search').focus();
-});
-$('#product-grid').addEventListener('click', e => {
-  const save = e.target.closest('[data-save]');
-  const detail = e.target.closest('[data-detail]');
-  if (save) toggleSaved(save.dataset.save);
-  else if (detail) openProduct(detail.dataset.detail);
-});
-$('#open-list').addEventListener('click', openDrawer);
-$('#close-list').addEventListener('click', closeDrawer);
-$('#drawer-overlay').addEventListener('click', closeDrawer);
-$('#drawer-items').addEventListener('click', e => {
-  const btn = e.target.closest('[data-save]');
-  if (btn) toggleSaved(btn.dataset.save);
-});
-$('#copy-list').addEventListener('click', copyList);
-$('#send-list-whatsapp').addEventListener('click', e => {
-  if (state.saved.size === 0) {
-    e.preventDefault();
-    showToast('Adicione pelo menos um item antes de enviar.');
-  }
-});
-$('#product-modal').addEventListener('click', e => {
-  const btn = e.target.closest('[data-save]');
-  if (btn) toggleSaved(btn.dataset.save);
-  if (e.target === $('#product-modal')) $('#product-modal').close();
-});
-$('#modal-close').addEventListener('click', () => $('#product-modal').close());
-$('#product-modal').addEventListener('close', () => lastFocus?.focus());
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && !$('#shortlist-drawer').hidden) closeDrawer();
-  if (e.key === 'Tab' && !$('#shortlist-drawer').hidden) {
-    const focusables = $$('button:not(:disabled), a[href]', $('#shortlist-drawer'));
-    if (!focusables.length) return;
-    const first = focusables[0], last = focusables[focusables.length - 1];
-    if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-    else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
-  }
-});
-$('#menu-toggle').addEventListener('click', () => {
-  const open = $('.main-nav').classList.toggle('is-open');
-  $('#menu-toggle').setAttribute('aria-expanded', String(open));
-  $('#menu-toggle').setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
-});
-$$('.main-nav a').forEach(a => a.addEventListener('click', () => {
-  $('.main-nav').classList.remove('is-open'); $('#menu-toggle').setAttribute('aria-expanded', 'false');
-}));
-$('#copyright-year').textContent = String(new Date().getFullYear());
-setupScrollReveals();
-renderProducts();
-renderDrawer();
+function prepareProductReveals() { $$('.product-card').forEach((el,i)=>{el.classList.add('scroll-reveal',i%2?'reveal-scale':'reveal-up');el.style.setProperty('--reveal-delay',`${Math.min(i%4,3)*70}ms`);if(revealObserver)revealObserver.observe(el);else el.classList.add('is-visible');}); }
+$('#category-filters').addEventListener('click',e=>{const b=e.target.closest('[data-category]');if(b){state.category=b.dataset.category;renderProducts();}});
+$('#product-search').addEventListener('input',e=>{state.query=e.target.value.trim();renderProducts();});
+$('#product-sort').addEventListener('change',e=>{state.sort=e.target.value;renderProducts();});
+$('#clear-filters').addEventListener('click',()=>{state.category='todos';state.query='';state.sort='featured';$('#product-search').value='';$('#product-sort').value='featured';renderProducts();$('#product-search').focus();});
+$('#product-grid').addEventListener('click',e=>{const s=e.target.closest('[data-save]'),d=e.target.closest('[data-detail]'),a=e.target.closest('[data-cart-add]');if(s)toggleSaved(s.dataset.save);else if(d)openProduct(d.dataset.detail);else if(a)addToCart(a.dataset.cartAdd);});
+$('#open-list').addEventListener('click',openDrawer);$('#close-list').addEventListener('click',closeDrawer);$('#drawer-overlay').addEventListener('click',closeDrawer);$('#drawer-items').addEventListener('click',e=>{const b=e.target.closest('[data-save]');if(b)toggleSaved(b.dataset.save);});
+$('#open-cart').addEventListener('click',openCart);$('#close-cart').addEventListener('click',closeCart);$('#cart-overlay').addEventListener('click',closeCart);$('#cart-items').addEventListener('click',e=>{const q=e.target.closest('[data-qty]'),r=e.target.closest('[data-cart-remove]');if(q){const id=q.dataset.qty;state.cart[id]=Math.max(0,Math.min(20,(state.cart[id]||0)+Number(q.dataset.delta)));if(!state.cart[id])delete state.cart[id];renderCart();}if(r){delete state.cart[r.dataset.cartRemove];renderCart();}});$('#clear-cart').addEventListener('click',()=>{state.cart={};renderCart();});$('#start-checkout').addEventListener('click',beginCheckout);$('#checkout-close').addEventListener('click',()=>$('#checkout-modal').close());
+$('#checkout-content').addEventListener('change',e=>{if(e.target.name==='fulfillment'){$('#delivery-address').hidden=e.target.value!=='delivery';$('#delivery-address').querySelectorAll('input').forEach(i=>i.required=e.target.value==='delivery');}});
+  $('#checkout-content').addEventListener('submit',e=>{if(e.target.id!=='checkout-form')return;e.preventDefault();const data=new FormData(e.target),order=Object.entries(state.cart).map(([id,qty])=>({product:PRODUCTS.find(p=>p.id===id),qty})).filter(x=>x.product),total=order.reduce((sum,x)=>sum+x.product.price*x.qty,0);const num=`DEMO-${Date.now().toString().slice(-6)}`;const fulfillment=data.get('fulfillment');$('#checkout-content').innerHTML=`<div class="checkout-content order-summary"><span class="eyebrow eyebrow-dark">RESUMO SIMULADO</span><h2 id="checkout-title">Pedido de demonstração</h2><div class="order-number">${num}</div><div class="demo-alert" role="status">Simulação concluída. Este pedido não foi enviado à loja e não houve cobrança.</div><section class="order-info-card"><h3>Cliente</h3><p><strong>${String(data.get('name')).replace(/[<>]/g,'')}</strong><span>${String(data.get('phone')).replace(/[<>]/g,'')}</span></p></section><section class="order-info-card"><h3>Recebimento</h3><p><strong>${fulfillment==='pickup'?'Retirada na loja':'Entrega'}</strong><span>${fulfillment==='pickup'?'Rua Fidalgo, 69 — Centro, Mogi das Cruzes':`${String(data.get('address')).replace(/[<>]/g,'')}, CEP ${String(data.get('zip')).replace(/[<>]/g,'')}`}</span></p></section><section class="order-products"><h3>Itens demonstrativos</h3><div class="order-lines">${order.map(x=>`<div class="order-line"><span class="order-product-name"><strong>${x.product.title}</strong><small>${x.qty} × ${money(x.product.price)} cada</small></span><strong class="order-line-total">${money(x.qty*x.product.price)}</strong></div>`).join('')}</div></section><div class="order-totals"><div><span>Subtotal</span><strong>${money(total)}</strong></div><div><span>Frete</span><strong>${fulfillment==='delivery'?'Pendente de cotação':'A combinar'}</strong></div><div class="checkout-total"><span>Total demonstrativo</span><strong>${money(total)}</strong></div></div><button class="button button-dark full-width" type="button" id="finish-demo">Concluir demonstração</button></div>`;$('#finish-demo').addEventListener('click',()=>{$('#checkout-modal').close();state.cart={};renderCart();showToast('Demonstração encerrada; nenhum pedido foi criado.');});});
+$('#copy-list').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(listMessage());showToast('Lista copiada.');}catch(_){showToast('Não foi possível copiar neste navegador.');}});
+$('#send-list-whatsapp').addEventListener('click',e=>{if(!state.saved.size)e.preventDefault();});
+$('#product-modal').addEventListener('click',e=>{const b=e.target.closest('[data-save]'),a=e.target.closest('[data-cart-add]');if(b)toggleSaved(b.dataset.save);else if(a)addToCart(a.dataset.cartAdd);if(e.target===$('#product-modal'))$('#product-modal').close();});$('#modal-close').addEventListener('click',()=>$('#product-modal').close());$('#product-modal').addEventListener('close',()=>lastFocus?.focus());
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#shortlist-drawer').hidden)closeDrawer();if(e.key==='Escape'&&!$('#cart-drawer').hidden)closeCart();});
+$('#menu-toggle').addEventListener('click',()=>{const open=$('.main-nav').classList.toggle('is-open');$('#menu-toggle').setAttribute('aria-expanded',String(open));$('#menu-toggle').setAttribute('aria-label',open?'Fechar menu':'Abrir menu');});$$('.main-nav a').forEach(a=>a.addEventListener('click',()=>{$('.main-nav').classList.remove('is-open');$('#menu-toggle').setAttribute('aria-expanded','false');}));
+$('#copyright-year').textContent=String(new Date().getFullYear());setupScrollReveals();renderProducts();renderDrawer();renderCart();

@@ -1,148 +1,50 @@
-# Vend e Trok — vitrine digital de móveis e artigos usados
+﻿# Vend e Trok — vitrine e demonstração local
 
-Site institucional e catálogo demonstrativo desenvolvido para a **Vend e Trok Comércio de Usados**, em Mogi das Cruzes (SP).
+Projeto local de apresentação da Vend e Trok Comércio de Usados, em Mogi das Cruzes (SP). O catálogo contém ilustrações e valores fictícios; não representa estoque, preço ou oferta confirmada pela loja.
 
-O projeto apresenta a loja, sua proposta de reaproveitamento, exemplos de produtos e formas de contato. O visitante pode explorar a vitrine, pesquisar itens, salvar seus favoritos e enviar uma consulta personalizada diretamente pelo WhatsApp.
+## Dados comerciais preservados
 
-## Repositório
+- Endereço: Rua Fidalgo, 69 — Centro, Mogi das Cruzes — SP
+- Telefone: (11) 4791-2391
+- WhatsApp: (11) 98887-5052
 
-Código-fonte disponível em:
+Confirme esses dados com a loja antes de uma publicação futura.
 
-<https://github.com/GustavoSales2001/vend-e-trok-site>
+## Abrir localmente
 
-## Funcionalidades
+Abra `index.html` no navegador. Não há dependências de frontend. Node.js 24.13.0 e npm 11.6.2 estão disponíveis no ambiente; nenhuma dependência foi instalada. Para iniciar a API local demonstrativa, execute `cd backend` e `npm start`. O projeto não usa Docker.
 
-- Layout responsivo para computadores, tablets e celulares.
-- Navegação por seções com rolagem suave.
-- Animações variadas quando os conteúdos entram na área visível.
-- Compatibilidade com a preferência de redução de movimento do dispositivo.
-- Catálogo demonstrativo organizado por categorias.
-- Filtros para sala, quarto, cozinha, escritório e outros itens.
-- Busca instantânea por nome, descrição ou categoria.
-- Modal com detalhes de cada produto.
-- Lista de interesse salva no navegador com `localStorage`.
-- Envio da lista completa de favoritos pelo WhatsApp.
-- Consulta de um produto específico com mensagem personalizada.
-- Botão flutuante e outros atalhos de contato pelo WhatsApp.
-- Link direto para a localização da loja no Google Maps.
-- Menu adaptado para dispositivos móveis.
-- Elementos básicos de acessibilidade, navegação por teclado e textos alternativos.
-
-## Contato configurado
-
-- **WhatsApp:** [(11) 98887-5052](https://wa.me/5511988875052)
-- **Telefone:** (11) 4791-2391
-- **Endereço:** Rua Fidalgo, 69 — Centro, Mogi das Cruzes — SP
-
-As mensagens do WhatsApp mudam conforme a ação do visitante. Ao consultar uma peça, o nome do item é incluído automaticamente. Ao enviar a lista de interesse, todos os produtos salvos são adicionados à mensagem.
-
-## Tecnologias utilizadas
-
-- HTML5
-- CSS3
-- JavaScript puro
-- SVG para ilustrações e ícones
-- `localStorage` para manter a lista de interesse
-- `IntersectionObserver` para ativar as animações durante a rolagem
-
-O projeto não utiliza frameworks, bibliotecas externas, banco de dados ou processo de instalação.
-
-## Como executar localmente
-
-### Opção 1 — abrir diretamente
-
-1. Baixe ou clone este repositório.
-2. Abra a pasta `vend-e-trok-site`.
-3. Clique duas vezes no arquivo `index.html`.
-
-### Opção 2 — usar o VS Code
-
-```bash
-git clone https://github.com/GustavoSales2001/vend-e-trok-site.git
-cd vend-e-trok-site
-code .
-```
-
-Depois, abra o `index.html` no navegador. Também é possível usar uma extensão de servidor local, como o Live Server, mas ela não é obrigatória.
-
-## Estrutura do projeto
+## Estrutura
 
 ```text
-vend-e-trok-site/
-├── index.html
-├── css/
-│   └── styles.css
-├── js/
-│   ├── main.js
-│   └── products.js
-├── assets/
-│   ├── icons/
-│   │   └── favicon.svg
-│   └── images/
-│       ├── aparador.svg
-│       ├── cadeira.svg
-│       ├── comoda.svg
-│       ├── estante.svg
-│       ├── geladeira.svg
-│       ├── hero-room.svg
-│       ├── mesa.svg
-│       ├── poltrona.svg
-│       └── sofa.svg
-├── LEIA-PRIMEIRO.txt
-└── README.md
+index.html                 Vitrine e carrinho demonstrativo
+admin.html                 Painel administrativo de demonstração
+css/styles.css             Estilos da vitrine
+css/admin.css              Estilos do painel
+js/products.js             Catálogo fictício centralizado
+js/main.js                 Busca, filtros, favoritos, carrinho e checkout simulado
+js/admin.js                CRUD local demonstrativo no navegador
+assets/images/             Ilustrações SVG locais
+backend/                   API demonstrativa somente de leitura e modelo SQL
+backups/pre-redesign/      Cópias locais dos arquivos alterados antes da edição
 ```
 
-## Como atualizar o catálogo
+## O que funciona nesta demonstração
 
-Os produtos demonstrativos ficam no arquivo `js/products.js`. Cada item segue esta estrutura:
+- Vitrine responsiva com busca, filtros de categoria e ordenação por preço ou ordem recente.
+- Detalhes do produto, favoritos mantidos no navegador e consulta pelo WhatsApp.
+- Preços e dados do catálogo claramente marcados como demonstrativos.
+- Carrinho local com quantidades, remoção, subtotal e persistência em `localStorage`.
+- Checkout cenográfico com dados de contato, retirada ou coleta de endereço para cotação de entrega. A tela de resumo declara que nenhum pedido foi enviado e nenhuma cobrança ocorreu.
+- Painel demonstrativo em `admin.html`, com indicadores e pedidos estáticos fictícios. É possível adicionar/remover itens locais; isso não altera o catálogo da vitrine nem um estoque real.
+- API local somente de leitura: `GET /api/health`, `GET /api/products` (parâmetros opcionais `category` e `q`) e `GET /api/categories`. Respostas identificam `mode: demo`.
 
-```js
-{
-  id: 'sofa-2',
-  title: 'Sofá de 2 lugares',
-  category: 'sala',
-  categoryLabel: 'Sala de estar',
-  image: 'assets/images/sofa.svg',
-  badge: 'Inspiração',
-  description: 'Descrição curta',
-  details: 'Informações adicionais sobre a peça'
-}
-```
+## Limites e próximos passos para uma loja real
 
-Para cadastrar um item:
+O backend implementado serve apenas o catálogo demonstrativo; não há banco conectado, autenticação ou autorização, armazenamento de imagens, controle de estoque, pedidos reais, cálculo automático de frete ou integração de pagamento. Não existem endpoints de escrita/administração. O painel é apenas um protótipo no navegador e não deve ser usado para administrar dados reais. Nenhuma senha ou credencial foi criada. O modelo SQL em `backend/database/schema.sql` é referência, não uma migração executada.
 
-1. Adicione a imagem em `assets/images/`.
-2. Copie um dos objetos existentes em `js/products.js`.
-3. Defina um `id` único.
-4. Atualize nome, categoria, imagem, descrição e detalhes.
-5. Abra o site e teste a busca, o filtro, o modal e a mensagem do WhatsApp.
+Para evoluir com segurança, será necessário decidir provedor e ambiente de banco, serviço de armazenamento, política de autenticação/permissões, logística e provedor de pagamento. Implementar essas integrações requer credenciais válidas no servidor e autorização antes de qualquer cobrança. O modelo de dados precisa contemplar produtos, imagens, estoque, clientes, pedidos, endereço, frete, pagamentos e histórico. Produtos e preços da demonstração devem ser substituídos por dados e imagens confirmados pela loja.
 
-## Como enviar novas alterações ao GitHub
+## Site publicado
 
-Depois de modificar os arquivos, execute no terminal do VS Code:
-
-```bash
-git add .
-git commit -m "Descreva a alteração realizada"
-git push
-```
-
-## Status do projeto
-
-Esta versão funciona como uma **vitrine demonstrativa**. Os produtos e ilustrações atuais são exemplos e não representam estoque confirmado.
-
-Antes de utilizar o site como catálogo oficial da loja, é necessário substituir os exemplos por fotos e informações reais, confirmando disponibilidade, estado de conservação e valores.
-
-O projeto não possui checkout, pagamentos, reserva automática, painel administrativo ou controle de estoque. A lista de interesse permanece no navegador do visitante e somente é enviada à loja quando ele toca no botão do WhatsApp.
-
-## Próximas melhorias possíveis
-
-- Publicação do site com GitHub Pages.
-- Cadastro de produtos reais e preços atualizados.
-- Painel administrativo para gerenciar o catálogo.
-- Integração com banco de dados e controle de estoque.
-- Recebimento e acompanhamento de solicitações de orçamento.
-
----
-
-Projeto desenvolvido como apresentação digital da Vend e Trok Comércio de Usados.
+As alterações desta tarefa foram feitas somente nesta cópia local. Não houve deploy, publicação, commit ou envio para o repositório remoto. Não execute `git push` para apresentar esta demonstração localmente.

@@ -1,19 +1,21 @@
-VEND E TROK — SITE DEMONSTRATIVO
+﻿VEND E TROK — APRESENTAÇÃO LOCAL
 
-ABRIR: clique duas vezes no arquivo index.html.
+ABRIR A VITRINE: clique duas vezes em index.html.
+PAINEL DEMONSTRATIVO: abra admin.html.
+NO VS CODE: abra a pasta inteira do projeto.
 
-NO VS CODE: Arquivo > Abrir Pasta > selecione esta pasta vend-e-trok-site.
-
-NÃO SEPARE index.html, css, js e assets.
+IMPORTANTE: catálogo, produtos, preços e pedidos são exemplos fictícios. O painel e o carrinho salvam dados somente neste navegador. Não há pagamento, pedido real ou controle de estoque.
 
 COMO ALTERAR:
-- Texto do site: index.html
-- Cores e design: css/styles.css
-- Produtos e imagens: js/products.js
-- Botões, busca, filtros e favoritos: js/main.js
+- Conteúdo da vitrine: index.html
+- Visual: css/styles.css e css/admin.css
+- Produtos e preços demonstrativos: js/products.js
+- Busca, filtros, favoritos e carrinho: js/main.js
+- Painel demonstrativo: js/admin.js
 
-ATENÇÃO: a vitrine tem imagens ilustrativas e produtos NÃO confirmados na loja.
-O site é um protótipo visual, sem pagamento, estoque real ou WhatsApp configurado.
-O telefone público informado é (11) 4791-2391.
+Contato da loja informado no projeto:
+Telefone: (11) 4791-2391
+WhatsApp: (11) 98887-5052
+Endereço: Rua Fidalgo, 69 — Centro, Mogi das Cruzes — SP
 
-Consulte o README.md para todas as instruções.
+O backend, banco de dados, login administrativo e pagamentos ainda não foram implementados. Nenhuma publicação foi feita; esta cópia local pode ser apresentada abrindo os arquivos HTML.

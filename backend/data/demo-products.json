@@ -1,0 +1,12 @@
+[
+ {"id":"sofa-2","title":"Sofá de 2 lugares","category":"sala","categoryLabel":"Sala de estar","price":890,"condition":"Bom estado"},
+ {"id":"mesa-jantar","title":"Mesa para jantar","category":"cozinha","categoryLabel":"Cozinha e jantar","price":420,"condition":"Bom estado"},
+ {"id":"comoda","title":"Cômoda com gavetas","category":"quarto","categoryLabel":"Quarto","price":360,"condition":"Marcas leves de uso"},
+ {"id":"poltrona","title":"Poltrona decorativa","category":"sala","categoryLabel":"Sala de estar","price":290,"condition":"Bom estado"},
+ {"id":"estante","title":"Estante multiuso","category":"outros","categoryLabel":"Organização","price":240,"condition":"Bom estado"},
+ {"id":"geladeira","title":"Geladeira","category":"cozinha","categoryLabel":"Eletrodomésticos","price":1250,"condition":"Usada, funcionamento a confirmar"},
+ {"id":"fogao","title":"Fogão 4 bocas","category":"cozinha","categoryLabel":"Eletrodomésticos","price":590,"condition":"Usado, funcionamento a confirmar"},
+ {"id":"televisao","title":"Televisão","category":"eletronicos","categoryLabel":"Eletrônicos","price":480,"condition":"Usada, funcionamento a confirmar"},
+ {"id":"cadeira","title":"Cadeira de escritório","category":"escritorio","categoryLabel":"Escritório","price":180,"condition":"Bom estado"},
+ {"id":"aparador","title":"Aparador decorativo","category":"outros","categoryLabel":"Decoração","price":310,"condition":"Marcas leves de uso"}
+]
